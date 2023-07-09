@@ -13,10 +13,6 @@ class HTML:
         self.failed = failed
         self.tests = tests
 
-    def __get_style(self):
-        with open("templates/static/bootstrap.min.css", "r") as f:
-            css = f.read()
-        return css
             
     def __render(self):
         template_folder, template = os.path.split(self.template)
@@ -25,7 +21,6 @@ class HTML:
         with open(self.output, "w") as fh:
             fh.write(
                 template.render(
-                style = self.__get_style(),
                 title = self.title,
                 pack_name = self.pack_name,
                 features = self.features,
