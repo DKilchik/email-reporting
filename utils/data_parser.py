@@ -82,7 +82,7 @@ class CucumberReport:
                     duplicates.append(self.__results[j])
 
 
-            output.append(sorted(duplicates, key=lambda d: d['start_timestamp'])[0])
+            output.append(sorted(duplicates, key=lambda d: d['start_timestamp'], reverse=True)[0])
             
         self.__results = output 
 
