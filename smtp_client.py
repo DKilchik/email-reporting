@@ -1,47 +1,28 @@
 import smtplib
 import os
+import argparse
 
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
 from utils.html_renderer import HTML
 
+parser = argparse.ArgumentParser(description="cmd parameters",
+                                 formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
-sender = "Private Person <from@example.com>"
-receiver = "A Test User <to@example.com>"
+parser.add_argument("-s", "--sender", action="store", default="<from@example.com>", help="email sender")
+parser.add_argument("-r","--receiver", action="store", default="<to@example.com>", help="email receivers, comma separated list")
+parser.add_argument("--subject", action="store", default="Test execution report", help="email subject")
+parser.add_argument("-t","--title", action="store", default="E-Shop", help="email title")
+parser.add_argument("-p","--pack", action="store", default="Smoke pack", help="testing pack")
+parser.add_argument("-f","--reports_folder", action="store", default="/target/cucumber-reports", help="path to folder with reports")
+
+args = parser.parse_args()
+
+config = vars(args)
+print(config)
 
 
-# Create message container - the correct MIME type is multipart/alternative.
-msg = MIMEMultipart('alternative')
-msg['Subject'] = "Link"
-msg['From'] = sender
-msg['To'] = receiver
-
-
-root = os.path.dirname(os.path.abspath(__file__))
-template = os.path.join(root, 'templates', 'bootstrap.html')
-output = os.path.join(root, 'html', 'index.html')
-
-tests = [{"name":"test1", "status":"passed", "duration":"1:01"},
-         {"name":"test2", "status":"failed", "duration":"5:01"},
-         {"name":"test3", "status":"passed", "duration":"10:01"}]
-
-html = HTML(
-    template=template,
-    output=output,
-    title="Message Title",
-    pack_name="Smoke pack",
-    total=10,
-    passed=5,
-    failed=5,
-    duration="10:17",
-    tests=tests
-).render
-
-content = MIMEText(html, 'html')
-
-msg.attach(content)
-
-with smtplib.SMTP("sandbox.smtp.mailtrap.io", 2525) as server:
-    server.login("52ed6fcb27d576", "f53926e6784663")
-    server.sendmail(sender, receiver, msg.as_string())
+# with smtplib.SMTP("sandbox.smtp.mailtrap.io", 2525) as server:
+#     server.login("52ed6fcb27d576", "f53926e6784663")
+#     server.sendmail(sender, receiver, msg.as_string())
